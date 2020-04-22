@@ -8,7 +8,7 @@ __WIP and yet untested in production.__
 
 ```dart
 final dio = Dio();
-final performanceInterceptor = DioFirebasePerfomanceInterceptor();
+final performanceInterceptor = DioFirebasePerformanceInterceptor();
 dio.interceptors.add(performanceInterceptor);
 ```
 
