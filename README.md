@@ -2,7 +2,7 @@
 
 Dio's Interceptor implementation that sends http request metric data to Firebase.
 
-__WIP and yet untested in production.__
+__STATUS: works for us in production.__
 
 ## Usage
 
