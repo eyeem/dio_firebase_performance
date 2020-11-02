@@ -1,3 +1,7 @@
+# [0.2.0]
+
+* bump up dio/firebase version (thx optimygmbh)
+
 # [0.1.0]
 
 * updated project status as used in production (by EyeEm)
