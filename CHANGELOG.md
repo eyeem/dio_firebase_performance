@@ -1,3 +1,7 @@
+# [0.3.0]
+
+* bump up dio/firebase version (thx ercadev)
+
 # [0.2.0]
 
 * bump up dio/firebase version (thx optimygmbh)
