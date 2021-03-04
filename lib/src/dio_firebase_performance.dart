@@ -32,7 +32,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       _map[requestKey] = metric;
       final requestContentLength = requestContentLengthMethod(options);
       await metric.start();
-      if (requestContentLength != null) {
+      if (requestContentLength >= 0) {
         metric.requestPayloadSize = requestContentLength;
       }
     } catch (_) {}
@@ -44,9 +44,11 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
     try {
       final requestKey = response.request.extra.hashCode;
       final metric = _map[requestKey];
-      metric.setResponse(response, responseContentLengthMethod);
-      await metric.stop();
-      _map.remove(requestKey);
+      if(metric != null) {
+        metric.setResponse(response, responseContentLengthMethod);
+        await metric.stop();
+        _map.remove(requestKey);
+      }
     } catch (_) {}
     return super.onResponse(response);
   }
@@ -54,9 +56,9 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
   @override
   Future onError(DioError err) async {
     try {
-      final requestKey = err.request.extra.hashCode;
+      final requestKey = err.request?.extra.hashCode;
       final metric = _map[requestKey];
-      metric.setResponse(err.response, responseContentLengthMethod);
+      metric!.setResponse(err.response, responseContentLengthMethod);
       await metric.stop();
       _map.remove(requestKey);
     } catch (_) {}
@@ -69,34 +71,31 @@ int defaultRequestContentLength(RequestOptions options) {
   try {
     if (options.data is String || options.data is Map) {
       return options.headers.toString().length +
-          (options.data?.toString()?.length ?? 0);
+          (options.data?.toString().length ?? 0);
     }
   } catch (_) {
-    return null;
+    return -1;
   }
-  return null;
+  return -1;
 }
 
 typedef ResponseContentLengthMethod = int Function(Response options);
 int defaultResponseContentLength(Response response) {
   if (response.data is String) {
-    return (response?.headers?.toString()?.length ?? 0) + response.data.length;
+    return  response.data.length + response.headers.toString().length;
   } else {
-    return null;
+    return -1;
   }
 }
 
 extension _ResponseHttpMetric on HttpMetric {
   void setResponse(
-      Response value, ResponseContentLengthMethod responseContentLengthMethod) {
+      Response? value, ResponseContentLengthMethod responseContentLengthMethod) {
     if (value == null) {
       return;
     }
-    final responseContentLength = responseContentLengthMethod(value);
-    if (responseContentLength != null) {
-      responsePayloadSize = responseContentLength;
-    }
-    final contentType = value?.headers?.value?.call(Headers.contentTypeHeader);
+    responsePayloadSize = responseContentLengthMethod(value);
+    final contentType = value.headers.value.call(Headers.contentTypeHeader);
     if (contentType != null) {
       responseContentType = contentType;
     }
@@ -113,11 +112,7 @@ extension _UriHttpMethod on Uri {
 }
 
 extension _StringHttpMethod on String {
-  HttpMethod asHttpMethod() {
-    if (this == null) {
-      return null;
-    }
-
+  HttpMethod? asHttpMethod() {
     switch (toUpperCase()) {
       case "POST":
         return HttpMethod.Post;
