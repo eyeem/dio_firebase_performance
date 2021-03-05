@@ -52,7 +52,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
   @override
   Future onError(DioError err) async {
     try {
-      final requestKey = err.request?.extra.hashCode;
+      final requestKey = err.request!.extra.hashCode;
       final metric = _map[requestKey];
       metric!.setResponse(err.response, responseContentLengthMethod);
       metric.stop();
@@ -85,7 +85,7 @@ extension _ResponseHttpMetric on HttpMetric {
     if (value == null) {
       return;
     }
-    responsePayloadSize = responseContentLengthMethod(value)??responsePayloadSize;
+    responsePayloadSize = responseContentLengthMethod(value) ?? responsePayloadSize;
     final contentType = value.headers.value.call(Headers.contentTypeHeader);
     if (contentType != null) responseContentType = contentType;
     if (value.statusCode != null) httpResponseCode = value.statusCode;
