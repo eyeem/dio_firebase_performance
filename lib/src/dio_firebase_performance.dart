@@ -25,8 +25,8 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
   @override
   Future onRequest(RequestOptions options) async {
     try {
-      final metric = FirebasePerformance.instance.newHttpMetric(
-          options.uri.normalized(), options.method.asHttpMethod());
+      final metric =
+          FirebasePerformance.instance.newHttpMetric(options.uri.normalized(), options.method.asHttpMethod());
 
       final requestKey = options.extra.hashCode;
       _map[requestKey] = metric;
@@ -44,11 +44,9 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
     try {
       final requestKey = response.request.extra.hashCode;
       final metric = _map[requestKey];
-      if(metric != null) {
-        metric.setResponse(response, responseContentLengthMethod);
-        metric.stop();
-        _map.remove(requestKey);
-      }
+      metric!.setResponse(response, responseContentLengthMethod);
+      metric.stop();
+      _map.remove(requestKey);
     } catch (_) {}
     return super.onResponse(response);
   }
@@ -70,8 +68,7 @@ typedef RequestContentLengthMethod = int Function(RequestOptions options);
 int defaultRequestContentLength(RequestOptions options) {
   try {
     if (options.data is String || options.data is Map) {
-      return options.headers.toString().length +
-          (options.data?.toString().length ?? 0);
+      return options.headers.toString().length + (options.data?.toString().length ?? 0);
     }
   } catch (_) {
     return -1;
@@ -82,15 +79,14 @@ int defaultRequestContentLength(RequestOptions options) {
 typedef ResponseContentLengthMethod = int Function(Response options);
 int defaultResponseContentLength(Response response) {
   if (response.data is String) {
-    return  response.data.length + response.headers.toString().length;
+    return response.data.length + response.headers.toString().length;
   } else {
     return -1;
   }
 }
 
 extension _ResponseHttpMetric on HttpMetric {
-  void setResponse(
-      Response? value, ResponseContentLengthMethod responseContentLengthMethod) {
+  void setResponse(Response? value, ResponseContentLengthMethod responseContentLengthMethod) {
     if (value == null) {
       return;
     }
