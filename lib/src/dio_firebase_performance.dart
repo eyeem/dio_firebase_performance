@@ -32,9 +32,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       _map[requestKey] = metric;
       final requestContentLength = requestContentLengthMethod(options);
       metric.start();
-      if (requestContentLength >= 0) {
-        metric.requestPayloadSize = requestContentLength;
-      }
+      if (requestContentLength != null) metric.requestPayloadSize = requestContentLength;
     } catch (_) {}
     return super.onRequest(options);
   }
@@ -64,25 +62,22 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
   }
 }
 
-typedef RequestContentLengthMethod = int Function(RequestOptions options);
-int defaultRequestContentLength(RequestOptions options) {
+typedef RequestContentLengthMethod = int? Function(RequestOptions options);
+int? defaultRequestContentLength(RequestOptions options) {
   try {
     if (options.data is String || options.data is Map) {
       return options.headers.toString().length + (options.data?.toString().length ?? 0);
     }
-  } catch (_) {
-    return -1;
-  }
-  return -1;
+  } catch (_) {}
+  return null;
 }
 
-typedef ResponseContentLengthMethod = int Function(Response options);
-int defaultResponseContentLength(Response response) {
+typedef ResponseContentLengthMethod = int? Function(Response options);
+int? defaultResponseContentLength(Response response) {
   if (response.data is String) {
     return response.data.length + response.headers.toString().length;
-  } else {
-    return -1;
   }
+  return null;
 }
 
 extension _ResponseHttpMetric on HttpMetric {
@@ -90,14 +85,10 @@ extension _ResponseHttpMetric on HttpMetric {
     if (value == null) {
       return;
     }
-    responsePayloadSize = responseContentLengthMethod(value);
+    responsePayloadSize = responseContentLengthMethod(value)??responsePayloadSize;
     final contentType = value.headers.value.call(Headers.contentTypeHeader);
-    if (contentType != null) {
-      responseContentType = contentType;
-    }
-    if (value.statusCode != null) {
-      httpResponseCode = value.statusCode;
-    }
+    if (contentType != null) responseContentType = contentType;
+    if (value.statusCode != null) httpResponseCode = value.statusCode;
   }
 }
 
