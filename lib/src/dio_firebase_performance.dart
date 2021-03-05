@@ -31,7 +31,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       final requestKey = options.extra.hashCode;
       _map[requestKey] = metric;
       final requestContentLength = requestContentLengthMethod(options);
-      await metric.start();
+      metric.start();
       if (requestContentLength >= 0) {
         metric.requestPayloadSize = requestContentLength;
       }
@@ -46,7 +46,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       final metric = _map[requestKey];
       if(metric != null) {
         metric.setResponse(response, responseContentLengthMethod);
-        await metric.stop();
+        metric.stop();
         _map.remove(requestKey);
       }
     } catch (_) {}
@@ -59,7 +59,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       final requestKey = err.request?.extra.hashCode;
       final metric = _map[requestKey];
       metric!.setResponse(err.response, responseContentLengthMethod);
-      await metric.stop();
+      metric.stop();
       _map.remove(requestKey);
     } catch (_) {}
     return super.onError(err);
