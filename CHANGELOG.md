@@ -1,4 +1,4 @@
-# [0.3.1-nullsafe]
+# [0.3.1]
 
 * nullsafety added
 
