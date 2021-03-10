@@ -1,3 +1,7 @@
+# [0.3.1-nullsafe]
+
+* nullsafety added
+
 # [0.3.0]
 
 * bump up dio/firebase version (thx ercadev)
