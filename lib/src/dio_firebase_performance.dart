@@ -85,7 +85,8 @@ extension _ResponseHttpMetric on HttpMetric {
     if (value == null) {
       return;
     }
-    responsePayloadSize = responseContentLengthMethod(value) ?? responsePayloadSize;
+    final responseContentLength = responseContentLengthMethod(value);
+    if(responseContentLength != null) responsePayloadSize = responseContentLength;
     final contentType = value.headers.value.call(Headers.contentTypeHeader);
     if (contentType != null) responseContentType = contentType;
     if (value.statusCode != null) httpResponseCode = value.statusCode;
