@@ -63,6 +63,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
 }
 
 typedef RequestContentLengthMethod = int? Function(RequestOptions options);
+
 int? defaultRequestContentLength(RequestOptions options) {
   try {
     if (options.data is String || options.data is Map) {
@@ -73,10 +74,10 @@ int? defaultRequestContentLength(RequestOptions options) {
 }
 
 typedef ResponseContentLengthMethod = int? Function(Response options);
+
 int? defaultResponseContentLength(Response response) {
-  if (response.data is String) {
-    return response.data.length + response.headers.toString().length;
-  }
+  if (response.data is String || response.data is Map || response.data is List)
+    return response.data.toString().length + response.headers.toString().length;
   return null;
 }
 
