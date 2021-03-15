@@ -4,12 +4,16 @@ version: 0.3.1
 homepage: https://github.com/eyeem/dio_firebase_performance
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  dio: ^4.0.0-beta7
+  dio:
+    git:
+      url: https://github.com/ARIFCSE10/dio
+      path: dio
+      ref: "4.0"
   firebase_performance: ^0.6.0
 
 dev_dependencies:
