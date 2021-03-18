@@ -1,6 +1,6 @@
-# [0.3.1]
+# [0.3.1-dev.1]
 
-* nullsafety added
+* nullsafety added as a prereleased version
 
 # [0.3.0]
 
