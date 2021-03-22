@@ -1,3 +1,15 @@
+# [0.3.1-dev.1]
+
+* nullsafety added as a prereleased version
+
+# [0.3.0]
+
+* bump up dio/firebase version (thx ercadev)
+
+# [0.2.0]
+
+* bump up dio/firebase version (thx optimygmbh)
+
 # [0.1.0]
 
 * updated project status as used in production (by EyeEm)
