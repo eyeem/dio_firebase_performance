@@ -23,7 +23,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
   final ResponseContentLengthMethod responseContentLengthMethod;
 
   @override
-  Future onRequest(RequestOptions options) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     try {
       final metric =
           FirebasePerformance.instance.newHttpMetric(options.uri.normalized(), options.method.asHttpMethod());
@@ -34,31 +34,31 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       metric.start();
       if (requestContentLength != null) metric.requestPayloadSize = requestContentLength;
     } catch (_) {}
-    return super.onRequest(options);
+    return super.onRequest(options, handler);
   }
 
   @override
-  Future onResponse(Response response) async {
+  void onResponse(Response response, ResponseInterceptorHandler handler) async {
     try {
-      final requestKey = response.request.extra.hashCode;
+      final requestKey = response.extra.hashCode;
       final metric = _map[requestKey];
       metric!.setResponse(response, responseContentLengthMethod);
       metric.stop();
       _map.remove(requestKey);
     } catch (_) {}
-    return super.onResponse(response);
+    return super.onResponse(response, handler);
   }
 
   @override
-  Future onError(DioError err) async {
+  Future onError(DioError err, ErrorInterceptorHandler handler) async {
     try {
-      final requestKey = err.request!.extra.hashCode;
+      final requestKey = err.response!.extra.hashCode;
       final metric = _map[requestKey];
       metric!.setResponse(err.response, responseContentLengthMethod);
       metric.stop();
       _map.remove(requestKey);
     } catch (_) {}
-    return super.onError(err);
+    return super.onError(err, handler);
   }
 }
 
