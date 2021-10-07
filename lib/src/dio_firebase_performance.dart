@@ -113,7 +113,7 @@ extension _UriHttpMethod on Uri {
 }
 
 extension _StringHttpMethod on String {
-  HttpMethod? asHttpMethod() {
+  HttpMethod asHttpMethod() {
     switch (toUpperCase()) {
       case "POST":
         return HttpMethod.Post;
@@ -128,7 +128,7 @@ extension _StringHttpMethod on String {
       case "OPTIONS":
         return HttpMethod.Options;
       default:
-        return null;
+        return HttpMethod.Trace;
     }
   }
 }
