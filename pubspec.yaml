@@ -14,7 +14,7 @@ dependencies:
       url: https://github.com/ARIFCSE10/dio
       path: dio
       ref: "4.0"
-  firebase_performance: ^0.6.0
+  firebase_performance: ^0.7.1+1
 
 dev_dependencies:
   flutter_test:
