@@ -1,4 +1,4 @@
-# [0.3.1-dev.4]
+# [0.3.1]
 
 * Update Firebase Performance dependency
 
