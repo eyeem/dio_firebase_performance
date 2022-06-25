@@ -69,21 +69,17 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
 typedef RequestContentLengthMethod = int? Function(RequestOptions options);
 int? defaultRequestContentLength(RequestOptions options) {
   try {
-    if (options.data is String || options.data is Map) {
-      return options.headers.toString().length +
-          (options.data?.toString().length ?? 0);
-    }
+    return options.headers.toString().length + options.data.toString().length;
   } catch (_) {
     return null;
   }
-  return null;
 }
 
 typedef ResponseContentLengthMethod = int? Function(Response options);
 int? defaultResponseContentLength(Response response) {
-  if (response.data is String) {
-    return (response.headers.toString().length) + response.data.length as int?;
-  } else {
+  try {
+    return response.headers.toString().length + response.data.toString().length;
+  } catch (_) {
     return null;
   }
 }
@@ -117,17 +113,17 @@ extension _UriHttpMethod on Uri {
 extension _StringHttpMethod on String {
   HttpMethod? asHttpMethod() {
     switch (toUpperCase()) {
-      case "POST":
+      case 'POST':
         return HttpMethod.Post;
-      case "GET":
+      case 'GET':
         return HttpMethod.Get;
-      case "DELETE":
+      case 'DELETE':
         return HttpMethod.Delete;
-      case "PUT":
+      case 'PUT':
         return HttpMethod.Put;
-      case "PATCH":
+      case 'PATCH':
         return HttpMethod.Patch;
-      case "OPTIONS":
+      case 'OPTIONS':
         return HttpMethod.Options;
       default:
         return null;
