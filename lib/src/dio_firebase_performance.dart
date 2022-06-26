@@ -13,9 +13,10 @@ import 'package:firebase_performance/firebase_performance.dart';
 /// This interceptor might be counting parsing time into elapsed API call duration.
 /// I am not fully aware of [Dio] internal architecture.
 class DioFirebasePerformanceInterceptor extends Interceptor {
-  DioFirebasePerformanceInterceptor(
-      {this.requestContentLengthMethod = defaultRequestContentLength,
-      this.responseContentLengthMethod = defaultResponseContentLength});
+  DioFirebasePerformanceInterceptor({
+    this.requestContentLengthMethod = defaultRequestContentLength,
+    this.responseContentLengthMethod = defaultResponseContentLength,
+  });
 
   /// key: requestKey hash code, value: ongoing metric
   final _map = <int, HttpMetric>{};
@@ -27,7 +28,9 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     try {
       final metric = FirebasePerformance.instance.newHttpMetric(
-          options.uri.normalized(), options.method.asHttpMethod()!);
+        options.uri.normalized(),
+        options.method.asHttpMethod()!,
+      );
 
       final requestKey = options.extra.hashCode;
       _map[requestKey] = metric;
@@ -78,7 +81,13 @@ int? defaultRequestContentLength(RequestOptions options) {
 typedef ResponseContentLengthMethod = int? Function(Response options);
 int? defaultResponseContentLength(Response response) {
   try {
-    return response.headers.toString().length + response.data.toString().length;
+    String? lengthHeader = response.headers[Headers.contentLengthHeader]?.first;
+    int length = int.parse(lengthHeader ?? '-1');
+    if (length <= 0) {
+      int headers = response.headers.toString().length;
+      length = headers + response.data.toString().length;
+    }
+    return length;
   } catch (_) {
     return null;
   }
