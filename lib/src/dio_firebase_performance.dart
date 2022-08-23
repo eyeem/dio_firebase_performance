@@ -27,7 +27,7 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     try {
       final metric = FirebasePerformance.instance.newHttpMetric(
-          options.uri.normalized(), options.method.asHttpMethod()!);
+          options.uri.normalized(), options.method.asHttpMethod());
 
       final requestKey = options.extra.hashCode;
       _map[requestKey] = metric;
@@ -115,7 +115,7 @@ extension _UriHttpMethod on Uri {
 }
 
 extension _StringHttpMethod on String {
-  HttpMethod? asHttpMethod() {
+  HttpMethod asHttpMethod() {
     switch (toUpperCase()) {
       case "POST":
         return HttpMethod.Post;
@@ -130,7 +130,7 @@ extension _StringHttpMethod on String {
       case "OPTIONS":
         return HttpMethod.Options;
       default:
-        return null;
+        return HttpMethod.Trace;
     }
   }
 }

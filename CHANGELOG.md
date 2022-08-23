@@ -1,3 +1,7 @@
+# [0.3.1-dev.4]
+
+* bump up firebase_performance
+
 # [0.3.1-dev.3]
 
 * Update Dependencies (thx abahnj)
