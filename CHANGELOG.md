@@ -1,6 +1,18 @@
-# [0.3.1]
+# [0.3.1-dev.4]
 
-* nullsafety added
+* bump up firebase_performance
+
+# [0.3.1-dev.3]
+
+* Update Dependencies (thx abahnj)
+
+# [0.3.1-dev.2]
+
+* Update to dio 4.0.0-prev3 (thx andreacimino)
+
+# [0.3.1-dev.1]
+
+* nullsafety added as a prereleased version
 
 # [0.3.0]
 

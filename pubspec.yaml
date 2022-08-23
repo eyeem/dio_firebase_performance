@@ -1,6 +1,6 @@
 name: dio_firebase_performance
 description: A new Flutter package project.
-version: 0.3.1
+version: 0.3.1-dev.4
 homepage: https://github.com/eyeem/dio_firebase_performance
 
 environment:
@@ -9,12 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio:
-    git:
-      url: https://github.com/ARIFCSE10/dio
-      path: dio
-      ref: "4.0"
-  firebase_performance: ^0.7.1+1
+  dio: ^4.0.0-beta7
+  firebase_performance: ^0.8.2+3
 
 dev_dependencies:
   flutter_test:
