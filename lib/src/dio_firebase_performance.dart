@@ -13,9 +13,10 @@ import 'package:firebase_performance/firebase_performance.dart';
 /// This interceptor might be counting parsing time into elapsed API call duration.
 /// I am not fully aware of [Dio] internal architecture.
 class DioFirebasePerformanceInterceptor extends Interceptor {
-  DioFirebasePerformanceInterceptor(
-      {this.requestContentLengthMethod = defaultRequestContentLength,
-      this.responseContentLengthMethod = defaultResponseContentLength});
+  DioFirebasePerformanceInterceptor({
+    this.requestContentLengthMethod = defaultRequestContentLength,
+    this.responseContentLengthMethod = defaultResponseContentLength,
+  });
 
   /// key: requestKey hash code, value: ongoing metric
   final _map = <int, HttpMetric>{};
@@ -27,7 +28,9 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     try {
       final metric = FirebasePerformance.instance.newHttpMetric(
-          options.uri.normalized(), options.method.asHttpMethod()!);
+        options.uri.normalized(),
+        options.method.asHttpMethod()!,
+      );
 
       final requestKey = options.extra.hashCode;
       _map[requestKey] = metric;
@@ -69,21 +72,23 @@ class DioFirebasePerformanceInterceptor extends Interceptor {
 typedef RequestContentLengthMethod = int? Function(RequestOptions options);
 int? defaultRequestContentLength(RequestOptions options) {
   try {
-    if (options.data is String || options.data is Map) {
-      return options.headers.toString().length +
-          (options.data?.toString().length ?? 0);
-    }
+    return options.headers.toString().length + options.data.toString().length;
   } catch (_) {
     return null;
   }
-  return null;
 }
 
 typedef ResponseContentLengthMethod = int? Function(Response options);
 int? defaultResponseContentLength(Response response) {
-  if (response.data is String) {
-    return (response.headers.toString().length) + response.data.length as int?;
-  } else {
+  try {
+    String? lengthHeader = response.headers[Headers.contentLengthHeader]?.first;
+    int length = int.parse(lengthHeader ?? '-1');
+    if (length <= 0) {
+      int headers = response.headers.toString().length;
+      length = headers + response.data.toString().length;
+    }
+    return length;
+  } catch (_) {
     return null;
   }
 }
@@ -117,17 +122,17 @@ extension _UriHttpMethod on Uri {
 extension _StringHttpMethod on String {
   HttpMethod? asHttpMethod() {
     switch (toUpperCase()) {
-      case "POST":
+      case 'POST':
         return HttpMethod.Post;
-      case "GET":
+      case 'GET':
         return HttpMethod.Get;
-      case "DELETE":
+      case 'DELETE':
         return HttpMethod.Delete;
-      case "PUT":
+      case 'PUT':
         return HttpMethod.Put;
-      case "PATCH":
+      case 'PATCH':
         return HttpMethod.Patch;
-      case "OPTIONS":
+      case 'OPTIONS':
         return HttpMethod.Options;
       default:
         return null;
